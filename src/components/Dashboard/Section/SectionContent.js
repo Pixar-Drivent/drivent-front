@@ -1,16 +1,16 @@
 import { RenderPaymentInfo, RenderTicket } from './SectionContents/PaymentContents';
 
-export function RenderSectionContent(text, page) {
+export function RenderSectionContent(text, page, renderObject) {
   if (page === 'payment') {
-    return RenderPaymentContent(text);
+    return RenderPaymentContent(text, renderObject);
   }
 
   return <></>;
 }
 
-function RenderPaymentContent(text) {
+function RenderPaymentContent(text, renderObject = {}) {
   if (text === 'Ingresso escolhido') {
-    return RenderTicket();
+    return RenderTicket(renderObject);
   }
   if (text === 'Pagamento') {
     return RenderPaymentInfo();

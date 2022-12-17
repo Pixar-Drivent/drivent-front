@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { RenderSectionContent } from './SectionContent';
 
-export function RenderSection({ text, page, ignoreTitle = false, ignoreSection = false }) {
+export function RenderSection({ text, page, renderObject = {}, ignoreTitle = false, ignoreSection = false }) {
   return (
     <SectionContainer>
       {!ignoreTitle ? <SectionTitle>{text}</SectionTitle> : <></>}
-      {!ignoreSection ? RenderSectionContent(text, page) : <></>}
+      {!ignoreSection ? RenderSectionContent(text, page, renderObject) : <></>}
     </SectionContainer>
   );
 }

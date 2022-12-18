@@ -31,7 +31,16 @@ export default function Payment() {
   
   function submitPayment(event) {
     event.preventDefault();
-    console.log('disparei');
+    let selectAccommodation = true;
+    if(accommodation === 'none' || accommodation === null) {
+      selectAccommodation = false;
+    }
+    const reserveDetails = {
+      modality: selectedOption,
+      accommodation: selectAccommodation,
+      price: price
+    };
+    console.log('body: ', reserveDetails);
   };
   
   return (

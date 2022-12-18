@@ -38,11 +38,14 @@ export default function Payment() {
     <>
       {
         enrollment === null ?
-          <NoPermitionCard>
-            <div>
-              Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso
-            </div>
-          </NoPermitionCard>
+          <>
+            <TextTittle>Ingresso e Pagamento</TextTittle>
+            <NoPermitionCard>
+              <div>
+                Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso
+              </div>
+            </NoPermitionCard>
+          </>
           :
           <Payments onSubmit={submitPayment}>
             <Container>

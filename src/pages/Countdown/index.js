@@ -11,7 +11,9 @@ import EventInfoContext from '../../contexts/EventInfoContext';
 export default function Countdown() {
   const { eventInfo, loadingEventInfo } = useContext(EventInfoContext);
   const navigate = useNavigate();
-  const countdownOver = useIsDateAfter(eventInfo?.startsAt);
+  let countdownOver = useIsDateAfter(eventInfo?.startsAt);
+  countdownOver=true;
+  console.log('countdownOver: ', countdownOver);
 
   useEffect(() => {
     if (countdownOver) {

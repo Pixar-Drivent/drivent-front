@@ -14,9 +14,10 @@ export default class RenderCard extends React.Component {
   handleCallback = ({ issuer }, isValid) => {
     const setPaymentInfo = this.props.alterValue[0];
     const paymentInfo = this.props.alterValue[1];
+
+    setPaymentInfo({ ...paymentInfo, issuer: issuer });
     if (isValid) {
       this.setState({ issuer });
-      setPaymentInfo({ ...paymentInfo, issuer: issuer });
     }
   };
 

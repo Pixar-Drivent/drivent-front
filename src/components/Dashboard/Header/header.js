@@ -11,7 +11,7 @@ export function RenderHeader({ text }) {
 const Header = styled.header`
   width: 100%;
   height: 40px;
-  margin: 0 0 40px 0;
+  margin: 0 0 0 0;
 
   font-family: 'Roboto', arial;
   font-style: normal;

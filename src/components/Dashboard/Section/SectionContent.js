@@ -1,8 +1,11 @@
-import { RenderPaymentInfo, RenderTicket } from './SectionContents/PaymentContents';
+import { RenderConfirmation, RenderPaymentInfo, RenderTicket } from './SectionContents/PaymentContents';
 
 export function RenderSectionContent(text, page, renderObject) {
   if (page === 'payment') {
     return RenderPaymentContent(text, renderObject);
+  }
+  if (page === 'payment-done') {
+    return RenderConfirmation();
   }
 
   return <></>;
@@ -13,7 +16,7 @@ function RenderPaymentContent(text, renderObject = {}) {
     return RenderTicket(renderObject);
   }
   if (text === 'Pagamento') {
-    return RenderPaymentInfo();
+    return RenderPaymentInfo(renderObject);
   }
 
   return <></>;

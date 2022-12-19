@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate
-} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import Countdown from './pages/Countdown';
@@ -11,7 +6,8 @@ import Enroll from './pages/Enroll';
 import SignIn from './pages/SignIn';
 import Dashboard from './pages/Dashboard';
 import FillSubscription from './pages/Dashboard/FillSubscription';
-import Payment from './pages/Dashboard/Payment';
+import Ticket from './pages/Dashboard/Ticket';
+import { Payment, PaymentInfo } from './pages/Dashboard/Payment';
 import Hotel from './pages/Dashboard/Hotel';
 import Activities from './pages/Dashboard/Activities';
 import Certificate from './pages/Dashboard/Certificate';
@@ -42,7 +38,9 @@ export default function App() {
                 }
               >
                 <Route path="subscription" element={<FillSubscription />} />
+                <Route path="ticket" element={<Ticket />} />
                 <Route path="payment" element={<Payment />} />
+                <Route path="payment-info" element={<PaymentInfo />} />
                 <Route path="hotel" element={<Hotel />} />
                 <Route path="activities" element={<Activities />} />
                 <Route path="certificate" element={<Certificate />} />
@@ -63,7 +61,5 @@ function ProtectedRouteGuard({ children }) {
     return <Navigate to="/sign-in" />;
   }
 
-  return <>
-    {children}
-  </>;
+  return <>{children}</>;
 }

@@ -13,7 +13,6 @@ export default function Countdown() {
   const navigate = useNavigate();
   let countdownOver = useIsDateAfter(eventInfo?.startsAt);
   countdownOver=true;
-  console.log('countdownOver: ', countdownOver);
 
   useEffect(() => {
     if (countdownOver) {

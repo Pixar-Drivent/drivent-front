@@ -88,10 +88,6 @@ function TicketPicker({ submitPayment, selectedOption, selectModality, accommoda
 }
 
 const Payments = styled.form``;
-const TextTitle = styled.div`
-  font-family: 'Roboto', sans-serif;
-  font-size: 34px;
-`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;

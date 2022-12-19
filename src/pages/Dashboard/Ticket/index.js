@@ -82,7 +82,7 @@ export function RenderTicketMenu(setSelectedTicket) {
       },
     };
 
-    const response = await reserveTicket(body, token);
+    await reserveTicket(body, token);
     setSubmitted(true);
   }
 

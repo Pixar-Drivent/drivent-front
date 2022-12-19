@@ -1,39 +1,5 @@
-import { StyledRoomsContainer, StyledRoomCard, StyledRoomCapacityContainer } from './style';
-import { BsPerson, BsPersonFill } from 'react-icons/bs';
-
-function BedAvailabilityIcon({ available }) {
-  return (
-    <>
-      {
-        available?
-          <BsPerson /> :
-          <BsPersonFill />
-      }
-    </>
-  );
-}
-
-function RoomCard({ room }) {
-  const { name, capacity, Booking } = room;
-  const beds = [];
-
-  for (let i = 1; i <= capacity; i++) {
-    if (capacity >= Booking + i) {
-      beds.push(<BedAvailabilityIcon key={i} available={true}/>);
-    } else {
-      beds.push(<BedAvailabilityIcon key={i} available={false}/>);
-    }
-  };
-
-  return (
-    <StyledRoomCard full={capacity === Booking}>
-      <h3>{ name }</h3>
-      <StyledRoomCapacityContainer>
-        {beds.map((bed, index) => bed)}
-      </StyledRoomCapacityContainer>
-    </StyledRoomCard>
-  );
-}
+import { StyledRoomsContainer } from './style';
+import { RoomCard } from '../../../components/RoomComponent';
 
 export default function Hotel() {
   return (

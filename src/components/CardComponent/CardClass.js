@@ -1,9 +1,9 @@
 import React from 'react';
-import Card from 'react-credit-cards';
+import Card from 'react-credit-cards-2';
 
 import { formatCreditCardNumber, formatCVC, formatExpirationDate, formatFormData } from './CardUtils';
 
-import 'react-credit-cards/es/styles-compiled.css';
+import 'react-credit-cards-2/es/styles-compiled.css';
 import styled from 'styled-components';
 
 export default class RenderCard extends React.Component {

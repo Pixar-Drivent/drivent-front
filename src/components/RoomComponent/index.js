@@ -2,28 +2,43 @@ import { StyledRoomCard, StyledRoomCapacityContainer } from './style';
 import { BsPerson, BsPersonFill } from 'react-icons/bs';
 
 function BedAvailabilityIcon({ available, selected }) {
-  if (selected) return <BsPersonFill color={'red'} />;
+  if (selected) return <BsPersonFill color={'#FF4791'} />;
   if (available) return <BsPerson />;
   return <BsPersonFill />;
 }
 
-export function RoomCard({ room }) {
-  const { name, capacity, Booking } = room;
-  const beds = [<BedAvailabilityIcon key={-1} available={true}/>];
+export function RoomCard({ room, selectedRoomState }) {
+  const { id, name, capacity, Booking } = room;
+  const [selectedRoom, SetSelectedRoom] = selectedRoomState;
+  const isFull = capacity === Booking;
+  const isSelected = id === selectedRoom;
 
-  for (let i = 1; i <= capacity; i++) {
-    if (capacity >= Booking + i) {
-      beds.push(<BedAvailabilityIcon key={i} available={true}/>);
-    } else {
-      beds.push(<BedAvailabilityIcon key={i} available={false}/>);
-    }
-  };
+  function handleSelectRoom(id, isFull) {
+    if (isFull) return;
+    SetSelectedRoom(id);
+  }
+
+  function bedsStatus() {
+    const beds = [];
+    for (let i = 1; i <= capacity; i++) {
+      if (isSelected && i === capacity - Booking) {
+        beds.push(<BedAvailabilityIcon key={i} selected={true}/>);
+        continue;
+      }
+      if (capacity >= Booking + i) {
+        beds.push(<BedAvailabilityIcon key={i} available={true}/>);
+      } else {
+        beds.push(<BedAvailabilityIcon key={i} available={false}/>);
+      };
+    };
+    return beds;
+  }
 
   return (
-    <StyledRoomCard full={capacity === Booking}>
+    <StyledRoomCard isFull={isFull} isSelected={isSelected} onClick={() => handleSelectRoom(id, isFull)}>
       <h3>{ name }</h3>
       <StyledRoomCapacityContainer>
-        {beds.map((bed, index) => bed)}
+        {bedsStatus().map(bed => bed)}
       </StyledRoomCapacityContainer>
     </StyledRoomCard>
   );

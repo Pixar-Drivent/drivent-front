@@ -12,28 +12,33 @@ const StyledRoomCard = styled.div`
     align-items: center;
     justify-content: space-between;
     
-    ${props => props.full?
+    ${props => props.isFull?
     'background-color:#E9E9E9;'
     :
     `&:hover{
         cursor: pointer;
-        background-color: #ffe7cc;
-        filter: opacity(0.5);
-        transition: background 500ms, filter 500ms;
+        background-color: white;
+        filter: brightness(0.8);
+        transition: background-color 200ms, filter 200ms;
     &:active{
         transform: translateY(2px);
     }
     }`};
+
+    ${props => props.isSelected?
+    'background-color:#FFEED2;'
+    :
+    'background-color: none'};
     
     h3 {
         font-family: 'Roboto', sans-serif;
         font-weight: 700;
         font-size: 20px;
-        ${props => props.full? 'color: #9D9D9D': 'color: #454545'};
+        ${props => props.isFull? 'color: #9D9D9D': 'color: #454545'};
     }
 
     svg {
-        ${props => props.full? 'color: #9D9D9D': 'color: black'};
+        ${props => props.isFull? 'color: #9D9D9D': 'color: black'};
     }
 `;
 

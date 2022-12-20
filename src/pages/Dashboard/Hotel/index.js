@@ -1,7 +1,31 @@
-import { StyledRoomsContainer } from './style';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+
+import { ButtomContainer, StyledRoomsContainer } from './style';
 import { RoomCard } from '../../../components/RoomComponent';
+import useToken from '../../../hooks/useToken';
+import { newBooking } from '../../../services/bookingApi';
 
 export default function Hotel() {
+  const [selectedRoom, setSelectedRoom] = useState(-1);
+  const [loading, setLoading] = useState(false);
+  const token = useToken();
+
+  async function handleReservation() {
+    setLoading(true);
+    
+    const body = { roomId: selectedRoom };
+
+    try {
+      await newBooking(body, token);
+      toast('Reserva realizada com sucesso!');
+    } catch (error) {
+      toast('Não foi possível fazer a reserva!');
+    }
+
+    setLoading(false);
+  }
+
   return (
     <>
       <p>Escolha de hotel e quarto</p>
@@ -11,8 +35,16 @@ export default function Hotel() {
       <StyledRoomsContainer>
         <h1>Ótima pedida! Agora escolha seu quarto:</h1>
         <div>
-          {roomsList.map((room, index) => <RoomCard key={index} room={room} />)}
+          {roomsList.map((room, index) => <RoomCard key={index} room={room} selectedRoomState={[selectedRoom, setSelectedRoom]}/>)}
         </div>
+
+        <ButtomContainer
+          disabled={loading}
+          onClick={handleReservation}
+        >
+          RESERVAR QUARTO
+        </ButtomContainer>
+
       </StyledRoomsContainer>
     </>
   );

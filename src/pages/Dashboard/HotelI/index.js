@@ -20,15 +20,23 @@ export default function HotelI() {
     {hotels === undefined? 
       <ErrorMsg> <div>Você precisa ter confirmado pagamento antes
       de fazer a escolha de hospedagem</div> </ErrorMsg> : 
-      <HotelComponent />}
+      hotels.length === 0?
+        <ErrorMsg> <div>Sua modalidade de ingresso não inclui hospedagem
+        Prossiga para a escolha de atividades</div> </ErrorMsg> :
+        <HotelComponent />}
   </>; 
 }
 
 async function getHotels(setHotels, token) {
   const response = await findHotels(token);
 
+  console.log(response);
+
   if (!response || !response.status) {
     setHotels(undefined);
+  }
+  if (response.message.includes('410')) {
+    setHotels([]);
   }
 }
 

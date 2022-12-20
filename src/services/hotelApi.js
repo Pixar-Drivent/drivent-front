@@ -11,5 +11,5 @@ export async function findHotels(token) {
       return err.toJSON();
     });
 
-  return response.data;
+  return response;
 }

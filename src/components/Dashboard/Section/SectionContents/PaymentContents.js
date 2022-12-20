@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { AiFillCheckCircle } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import useEnrollment from '../../../../hooks/api/useEnrollment';
 import useToken from '../../../../hooks/useToken';
 import { newPayment } from '../../../../services/paymentApi';
 import RenderCard from '../../../CardComponent/CardClass';

@@ -8,7 +8,7 @@ import Dashboard from './pages/Dashboard';
 import FillSubscription from './pages/Dashboard/FillSubscription';
 import Ticket from './pages/Dashboard/Ticket';
 import { Payment, PaymentInfo } from './pages/Dashboard/Payment';
-import Hotel from './pages/Dashboard/Hotel';
+import Hotel from './pages/Dashboard/HotelI';
 import Activities from './pages/Dashboard/Activities';
 import Certificate from './pages/Dashboard/Certificate';
 

@@ -14,6 +14,8 @@ export default function Hotel() {
   const token = useToken();
 
   const [hotels, setHotels] = useState([]);
+  const [selectedHotelId, setSelectedHotelId] = useState(-1);
+  const [selectedHotelObj, setSelectedHotelObj] = useState(null);
 
   const [selectedRoom, setSelectedRoom] = useState(-1);
   const [loading, setLoading] = useState(false);
@@ -22,20 +24,16 @@ export default function Hotel() {
   
   useEffect(async() => {
     getHotels(setHotels, token);
-  }, []); 
+  }, [loading]); 
 
   useEffect(async() => {
-    try {
-      const bookingInfo = await userBooking(token);
-      setReservationInfo(bookingInfo);
-
-      const hotelInfo = await findHotelById(token, bookingInfo.Room.hotelId);
-      setReservedHotel(hotelInfo);
-    } catch (error) {
-      if (error.message.includes('404')) return;
-      toast('Não foi possível verificar a reserva!');
-    }
+    getReservationInfo(setReservationInfo, setReservedHotel, setSelectedHotelId, token);
   }, [loading]);
+
+  useEffect(async() => {
+    if (selectedHotelId === -1) return;
+    getSelectedHotelRooms(findHotelById, setSelectedHotelObj, selectedHotelId, token);
+  }, [selectedHotelId, loading]);
 
   async function handleReservation() {
     setLoading(true);
@@ -69,17 +67,24 @@ export default function Hotel() {
   }
 
   async function handleChangeRoom() {
+    setLoading(true);
     setReservedHotel(null);
     setSelectedRoom(reservationInfo.Room.id);
+    setLoading(false);
   }
 
   function RenderRoomList() {
     return (
       <StyledRoomsContainer>
         <h1>Ótima pedida! Agora escolha seu quarto:</h1>
-        <div>
-          {roomsList.map((room, index) => <RoomCard key={index} room={room} selectedRoomState={[selectedRoom, setSelectedRoom]}/>)}
-        </div>
+        {
+          selectedHotelObj?
+            <div>
+              {selectedHotelObj.Rooms.map((room, index) => <RoomCard key={index} room={room} selectedRoomState={[selectedRoom, setSelectedRoom]}/>)}
+            </div>
+            :
+            <>Carregando</>
+        }
 
         <ButtomContainer
           disabled={loading}
@@ -92,12 +97,11 @@ export default function Hotel() {
   }
 
   function RenderReservation() {
+    const hotelObj = hotels.filter(hotel => hotel.id === reservedHotel.id)[0];
+
     return (
       <>
-        <div>
-          Nome do Hotel: {reservedHotel.name}
-          <img width={'100px'} src={reservedHotel.image} alt='Hotel'/>
-        </div>    
+        <HotelComponent obj={hotelObj} selected={true}/>
         <ButtomContainer
           disabled={loading}
           onClick={handleChangeRoom}
@@ -121,18 +125,24 @@ export default function Hotel() {
           <ErrorMsg> <div>Sua modalidade de ingresso não inclui hospedagem
           Prossiga para a escolha de atividades</div> </ErrorMsg>
           :
-          <Container>
-            <h1>Primeiro, escolha seu hotel</h1>
-            <div>
-              {hotels.map( (e, i) => <HotelComponent key={i} obj={e} model={true} />)}
-            </div>
-          </Container>
+          reservationInfo === null || reservedHotel === null?
+            <Container>
+              <h1>Primeiro, escolha seu hotel</h1>
+              <div>
+                {hotels.map( (e, i) => <HotelComponent key={i} obj={e} model={true} selectedHotelIdState={[selectedHotelId, setSelectedHotelId]}/>)}
+              </div>
+            </Container>
+            :
+            <></>
       }
 
-      {reservationInfo === null || reservedHotel === null?
-        <RenderRoomList />
+      {selectedHotelId === -1?
+        <></>
         :
-        <RenderReservation />
+        reservationInfo === null || reservedHotel === null?
+          <RenderRoomList />
+          :
+          <RenderReservation />
       }
     </>
   );
@@ -153,133 +163,26 @@ async function getHotels(setHotels, token) {
   }
 }
 
-//Dados mochados
+async function getReservationInfo(setReservationInfo, setReservedHotel, setSelectedHotelId, token) {
+  try {
+    const bookingInfo = await userBooking(token);
+    setReservationInfo(bookingInfo);
 
-const roomsList = [
-  {
-    id: 1,
-    name: '1',
-    capacity: 1,
-    hotelId: 1,
-    Booking: 0,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 2,
-    name: '2',
-    capacity: 1,
-    hotelId: 1,
-    Booking: 1,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 3,
-    name: '3',
-    capacity: 2,
-    hotelId: 1,
-    Booking: 0,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 4,
-    name: '4',
-    capacity: 2,
-    hotelId: 1,
-    Booking: 1,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 5,
-    name: '5',
-    capacity: 2,
-    hotelId: 1,
-    Booking: 2,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 6,
-    name: '6',
-    capacity: 3,
-    hotelId: 1,
-    Booking: 0,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 7,
-    name: '7',
-    capacity: 3,
-    hotelId: 1,
-    Booking: 1,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 8,
-    name: '8',
-    capacity: 3,
-    hotelId: 1,
-    Booking: 2,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 9,
-    name: '9',
-    capacity: 3,
-    hotelId: 1,
-    Booking: 3,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 10,
-    name: '10',
-    capacity: 4,
-    hotelId: 1,
-    Booking: 0,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 11,
-    name: '11',
-    capacity: 4,
-    hotelId: 1,
-    Booking: 1,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 12,
-    name: '12',
-    capacity: 4,
-    hotelId: 1,
-    Booking: 2,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 13,
-    name: '13',
-    capacity: 4,
-    hotelId: 1,
-    Booking: 3,
-    createdAt: true,
-    updatedAt: true,
-  },
-  {
-    id: 14,
-    name: '14',
-    capacity: 4,
-    hotelId: 1,
-    Booking: 4,
-    createdAt: true,
-    updatedAt: true,
-  },
-];
+    const hotelInfo = await findHotelById(token, bookingInfo.Room.hotelId);
+    setReservedHotel(hotelInfo);
+    setSelectedHotelId(bookingInfo.Room.hotelId);
+  } catch (error) {
+    if (error.message.includes('404')) return;
+    toast('Não foi possível verificar a reserva!');
+  }
+}
+
+async function getSelectedHotelRooms(findHotelById, setSelectedHotelObj, hotelId, token) {
+  try {
+    const hotelInfo = await findHotelById(token, hotelId);
+    setSelectedHotelObj(hotelInfo);
+  } catch (error) {
+    if (error.message.includes('404')) return;
+    toast('Não foi possível verificar a reserva!');
+  }
+}

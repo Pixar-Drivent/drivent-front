@@ -9,13 +9,13 @@ function BedAvailabilityIcon({ available, selected }) {
 
 export function RoomCard({ room, selectedRoomState }) {
   const { id, name, capacity, Booking } = room;
-  const [selectedRoom, SetSelectedRoom] = selectedRoomState;
+  const [selectedRoom, setSelectedRoom] = selectedRoomState;
   const isFull = capacity === Booking;
   const isSelected = id === selectedRoom;
 
   function handleSelectRoom(id, isFull) {
     if (isFull) return;
-    SetSelectedRoom(id);
+    setSelectedRoom(id);
   }
 
   function bedsStatus() {

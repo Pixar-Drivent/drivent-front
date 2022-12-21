@@ -48,7 +48,6 @@ const ButtomContainer = styled.button`
 
 const Container = styled.div`
   width: 100%;
-  min-height: 80%;
 
   & > h1 {
     font-family: 'Roboto';

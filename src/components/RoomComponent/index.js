@@ -7,11 +7,14 @@ function BedAvailabilityIcon({ available, selected }) {
   return <BsPersonFill />;
 }
 
-export function RoomCard({ room, selectedRoomState }) {
+export function RoomCard({ room, selectedRoomState, reservationInfo }) {
   const { id, name, capacity, Booking } = room;
   const [selectedRoom, setSelectedRoom] = selectedRoomState;
-  const isFull = capacity === Booking.length;
+  const occupancy = Booking.length;
+
+  const isFull = capacity === occupancy;
   const isSelected = id === selectedRoom;
+  const isReserved = id === reservationInfo.Room.id;
 
   function handleSelectRoom(id, isFull) {
     if (isFull) return;
@@ -33,6 +36,18 @@ export function RoomCard({ room, selectedRoomState }) {
     };
     return beds;
   }
+  /*
+  function bedsStatus() {
+    const beds = [];
+    for (let i = 1; i <= capacity; i++) {
+      let status = 0;
+      
+      if (status === 0) beds.push(<BedAvailabilityIcon key={i} available={true}/>);
+      if (status === 1) beds.push(<BedAvailabilityIcon key={i} available={false}/>);
+      if (status === 2) beds.push(<BedAvailabilityIcon key={i} selected={true}/>);
+    }
+    return beds;
+  }*/
 
   return (
     <StyledRoomCard isFull={isFull} isSelected={isSelected} onClick={() => handleSelectRoom(id, isFull)}>

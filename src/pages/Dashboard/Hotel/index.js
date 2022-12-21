@@ -80,7 +80,13 @@ export default function Hotel() {
         {
           selectedHotelObj?
             <div>
-              {selectedHotelObj.Rooms.map((room, index) => <RoomCard key={index} room={room} selectedRoomState={[selectedRoom, setSelectedRoom]}/>)}
+              {selectedHotelObj.Rooms.map((room, index) => 
+                <RoomCard 
+                  key={index}
+                  room={room}
+                  selectedRoomState={[selectedRoom, setSelectedRoom] }
+                  reservationInfo={reservationInfo}
+                />)}
             </div>
             :
             <>Carregando</>
@@ -100,7 +106,7 @@ export default function Hotel() {
     if (!selectedHotelObj || !reservationInfo) return <></>;
     const roomInfo = selectedHotelObj.Rooms.find(room => room.id === reservationInfo.Room.id);
     if (!roomInfo) return <></>;
-    const type = roomType(roomInfo.capacity);
+    const type = roomType(roomInfo.name, roomInfo.capacity);
     const vacancy = roomVacancy(roomInfo.capacity, roomInfo.Booking.length);
     const reservationObj = {
       name: selectedHotelObj.name,
@@ -197,14 +203,15 @@ async function getSelectedHotelRooms(findHotelById, setSelectedHotelObj, hotelId
   }
 }
 
-function roomType(num) {
-  if (num === 1) return 'single';
-  if (num === 2) return 'double';
-  if (num === 3) return 'triple';
-  return 'multiple';
+function roomType(name, capacity) {
+  let type = 'multiple';
+  if (capacity === 1) type = 'single';
+  if (capacity === 2) type = 'double';
+  if (capacity === 3) type = 'triple';
+  return `${name} (${type})`;
 }
 
 function roomVacancy(capacity, occupation) {
   if (capacity === 1 || occupation ===1) return 'Somente você';
-  return 'Você e mais '+(occupation-1);
+  return `Você e mais ${occupation-1}`;
 }

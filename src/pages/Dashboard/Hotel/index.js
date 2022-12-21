@@ -1,15 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { ButtomContainer, StyledRoomsContainer } from './style';
 import { RoomCard } from '../../../components/RoomComponent';
 import useToken from '../../../hooks/useToken';
-import { newBooking } from '../../../services/bookingApi';
+import { newBooking, updateBooking, userBooking } from '../../../services/bookingApi';
+import { BsBook } from 'react-icons/bs';
+import { findHotelById } from '../../../services/hotelApi';
 
 export default function Hotel() {
   const [selectedRoom, setSelectedRoom] = useState(-1);
   const [loading, setLoading] = useState(false);
+  const [reservationInfo, setReservationInfo] = useState(null);
+  const [reservedHotel, setReservedHotel] = useState(null);
   const token = useToken();
+
+  useEffect(async() => {
+    try {
+      const bookingInfo = await userBooking(token);
+      setReservationInfo(bookingInfo);
+
+      const hotelInfo = await findHotelById(token, bookingInfo.Room.hotelId);
+      setReservedHotel(hotelInfo);
+    } catch (error) {
+      if (error.message.includes('404')) return;
+      toast('Não foi possível verificar a reserva!');
+    }
+  }, [loading]);
 
   async function handleReservation() {
     setLoading(true);
@@ -17,21 +34,38 @@ export default function Hotel() {
     const body = { roomId: selectedRoom };
 
     try {
+      const bookingInfo = await userBooking(token);
+      await updateBooking(bookingInfo.id, body, token);
+      toast('Reserva atualizada com sucesso!');
+      setLoading(false);
+      return;
+    } catch (error) {
+      if (!error.message.includes('404')) {
+        toast('Erro no carregamento da página!');
+        return;
+      };
+    }
+
+    try {
       await newBooking(body, token);
       toast('Reserva realizada com sucesso!');
     } catch (error) {
-      toast('Não foi possível fazer a reserva!');
+      let message = 'Não foi possível concluir a reserva!';
+      if (error.message.includes('403')) message = 'Quarto sem vagas disponíveis!';
+      if (error.message.includes('404')) message = 'Quarto não encontrado!';
+      toast(message);
     }
 
     setLoading(false);
   }
 
-  return (
-    <>
-      <p>Escolha de hotel e quarto</p>
-      <p>Primeiro, escolha seu hotel</p>
-      <p>~Lista com os hotéis~</p>
+  async function handleChangeRoom() {
+    setReservedHotel(null);
+    setSelectedRoom(reservationInfo.Room.id);
+  }
 
+  function RenderRoomList() {
+    return (
       <StyledRoomsContainer>
         <h1>Ótima pedida! Agora escolha seu quarto:</h1>
         <div>
@@ -44,8 +78,39 @@ export default function Hotel() {
         >
           RESERVAR QUARTO
         </ButtomContainer>
-
       </StyledRoomsContainer>
+    );
+  }
+
+  function RenderReservation() {
+    return (
+      <>
+        <div>
+          Nome do Hotel: {reservedHotel.name}
+          <img width={'100px'} src={reservedHotel.image} alt='Hotel Image'/>
+        </div>    
+        <ButtomContainer
+          disabled={loading}
+          onClick={handleChangeRoom}
+        >
+          TROCAR DE QUARTO
+        </ButtomContainer>
+      </>
+
+    );
+  }
+
+  return (
+    <>
+      <p>Escolha de hotel e quarto</p>
+      <p>Primeiro, escolha seu hotel</p>
+      <p>~Lista com os hotéis~</p>
+
+      {reservationInfo === null || reservedHotel === null?
+        <RenderRoomList />
+        :
+        <RenderReservation />
+      }
     </>
   );
 }

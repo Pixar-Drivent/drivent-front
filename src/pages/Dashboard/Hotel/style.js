@@ -46,7 +46,47 @@ const ButtomContainer = styled.button`
   };
 `;
 
+const Container = styled.div`
+  width: 100%;
+
+  & > h1 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 23px;
+    color: #8E8E8E;
+    margin-top: 40px;
+  }
+
+  & > div {
+    display: flex;
+  }
+`;
+
+const ErrorMsg = styled.div`
+  width: 100%;
+  min-height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  div {
+    width: 464px;
+    height: 46px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 23px;
+    text-align: center;
+    color: #8E8E8E;
+  }
+`;
+
 export {
   StyledRoomsContainer,
-  ButtomContainer
+  ButtomContainer,
+  Container,
+  ErrorMsg
 };

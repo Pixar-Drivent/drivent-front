@@ -1,9 +1,11 @@
 import styled from 'styled-components';
 
-export default function HotelComponent( { obj, model = false, selected = false } ) {
-  console.log(obj, model);
+export default function HotelComponent( { obj, model = false, selected = false, selectedHotelIdState = [0, () => { }] } ) {
+  if (!obj) return <></>;
+  const [selectedHotelId, setSelectedHotelId] = selectedHotelIdState;
+  const isSelected = obj.id === selectedHotelId;
 
-  return <Container selected={selected}>
+  return <Container selected={selected || isSelected} onClick={() => setSelectedHotelId(obj.id)}>
     <img src={obj.image} alt={obj.name} />
     <div>
       <h2>{obj.name}</h2>
@@ -56,5 +58,14 @@ const Container = styled.div`
   }
   div {
     width: 85%;
+  }
+  &:hover{
+        cursor: pointer;
+        background-color: white;
+        filter: brightness(0.8);
+        transition: background-color 200ms, filter 200ms;
+  }
+  &:active{
+      transform: translateY(2px);
   }
 `;

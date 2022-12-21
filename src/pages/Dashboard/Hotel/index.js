@@ -5,7 +5,6 @@ import { ButtomContainer, StyledRoomsContainer } from './style';
 import { RoomCard } from '../../../components/RoomComponent';
 import useToken from '../../../hooks/useToken';
 import { newBooking, updateBooking, userBooking } from '../../../services/bookingApi';
-import { BsBook } from 'react-icons/bs';
 import { findHotelById } from '../../../services/hotelApi';
 
 export default function Hotel() {
@@ -87,7 +86,7 @@ export default function Hotel() {
       <>
         <div>
           Nome do Hotel: {reservedHotel.name}
-          <img width={'100px'} src={reservedHotel.image} alt='Hotel Image'/>
+          <img width={'100px'} src={reservedHotel.image} alt='Hotel'/>
         </div>    
         <ButtomContainer
           disabled={loading}

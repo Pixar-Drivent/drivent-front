@@ -97,11 +97,20 @@ export default function Hotel() {
   }
 
   function RenderReservation() {
-    const hotelObj = hotels.filter(hotel => hotel.id === reservedHotel.id)[0];
+    if (!selectedHotelObj || !reservationInfo) return <></>;
+    const roomInfo = selectedHotelObj.Rooms.find(room => room.id === reservationInfo.Room.id);
+    const type = roomType(roomInfo.capacity);
+    const vacancy = roomVacancy(roomInfo.capacity, roomInfo.Booking.length);
+    const reservationObj = {
+      name: selectedHotelObj.name,
+      image: selectedHotelObj.image,
+      type,
+      vacancy,
+    };
 
     return (
       <>
-        <HotelComponent obj={hotelObj} selected={true}/>
+        <HotelComponent obj={reservationObj} selected={true}/>
         <ButtomContainer
           disabled={loading}
           onClick={handleChangeRoom}
@@ -185,4 +194,16 @@ async function getSelectedHotelRooms(findHotelById, setSelectedHotelObj, hotelId
     if (error.message.includes('404')) return;
     toast('Não foi possível verificar a reserva!');
   }
+}
+
+function roomType(num) {
+  if (num === 1) return 'single';
+  if (num === 2) return 'double';
+  if (num === 3) return 'triple';
+  return 'multiple';
+}
+
+function roomVacancy(capacity, occupation) {
+  if (capacity === 1 || occupation ===1) return 'Somente você';
+  return 'Você e mais '+(occupation-1);
 }

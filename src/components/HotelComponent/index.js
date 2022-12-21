@@ -10,9 +10,9 @@ export default function HotelComponent( { obj, model = false, selected = false, 
     <div>
       <h2>{obj.name}</h2>
       <h3>{model? 'Tipos de acomodação:' : 'Quarto reservado'}</h3>
-      <p>{model? obj.type : '~~'}</p>
+      <p>{obj.type}</p>
       <h3>{model? 'Vagas disponíveis:' : 'Pessoas no seu quarto'}</h3>
-      <p>{model? obj.vacancy : 'Você e mais ~~'}</p>
+      <p>{obj.vacancy}</p>
     </div>
   </Container>;
 }

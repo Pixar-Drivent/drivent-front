@@ -1,18 +1,28 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { ButtomContainer, StyledRoomsContainer } from './style';
-import { RoomCard } from '../../../components/RoomComponent';
+import { RenderHeader } from '../../../components/Dashboard/Header/header';
+import HotelComponent from '../../../components/HotelComponent';
 import useToken from '../../../hooks/useToken';
+import { findHotels, findHotelById } from '../../../services/hotelApi';
+
+import { ButtomContainer, StyledRoomsContainer, Container, ErrorMsg } from './style';
+import { RoomCard } from '../../../components/RoomComponent';
 import { newBooking, updateBooking, userBooking } from '../../../services/bookingApi';
-import { findHotelById } from '../../../services/hotelApi';
 
 export default function Hotel() {
+  const token = useToken();
+
+  const [hotels, setHotels] = useState([]);
+
   const [selectedRoom, setSelectedRoom] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [reservationInfo, setReservationInfo] = useState(null);
   const [reservedHotel, setReservedHotel] = useState(null);
-  const token = useToken();
+  
+  useEffect(async() => {
+    getHotels(setHotels, token);
+  }, []); 
 
   useEffect(async() => {
     try {
@@ -101,9 +111,23 @@ export default function Hotel() {
 
   return (
     <>
-      <p>Escolha de hotel e quarto</p>
-      <p>Primeiro, escolha seu hotel</p>
-      <p>~Lista com os hotéis~</p>
+      {RenderHeader({ text: 'Escolha de hotel e quarto' })}
+
+      {hotels === undefined? 
+        <ErrorMsg> <div>Você precisa ter confirmado pagamento antes
+        de fazer a escolha de hospedagem</div> </ErrorMsg>
+        : 
+        hotels.length === 0?
+          <ErrorMsg> <div>Sua modalidade de ingresso não inclui hospedagem
+          Prossiga para a escolha de atividades</div> </ErrorMsg>
+          :
+          <Container>
+            <h1>Primeiro, escolha seu hotel</h1>
+            <div>
+              {hotels.map( (e, i) => <HotelComponent key={i} obj={e} model={true} />)}
+            </div>
+          </Container>
+      }
 
       {reservationInfo === null || reservedHotel === null?
         <RenderRoomList />
@@ -112,6 +136,21 @@ export default function Hotel() {
       }
     </>
   );
+}
+
+async function getHotels(setHotels, token) {
+  const response = await findHotels(token);
+
+  if (response.status === 200) {
+    setHotels(response.data);
+    response.message = 'OK';
+  }
+  if (!response || !response.status) {
+    setHotels(undefined);
+  }
+  if (response.message.includes('410')) {
+    setHotels([]);
+  }
 }
 
 //Dados mochados

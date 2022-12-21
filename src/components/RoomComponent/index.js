@@ -10,7 +10,7 @@ function BedAvailabilityIcon({ available, selected }) {
 export function RoomCard({ room, selectedRoomState }) {
   const { id, name, capacity, Booking } = room;
   const [selectedRoom, setSelectedRoom] = selectedRoomState;
-  const isFull = capacity === Booking;
+  const isFull = capacity === Booking.length;
   const isSelected = id === selectedRoom;
 
   function handleSelectRoom(id, isFull) {
@@ -21,11 +21,11 @@ export function RoomCard({ room, selectedRoomState }) {
   function bedsStatus() {
     const beds = [];
     for (let i = 1; i <= capacity; i++) {
-      if (isSelected && i === capacity - Booking) {
+      if (isSelected && i === capacity - Booking.length) {
         beds.push(<BedAvailabilityIcon key={i} selected={true}/>);
         continue;
       }
-      if (capacity >= Booking + i) {
+      if (capacity >= Booking.length + i) {
         beds.push(<BedAvailabilityIcon key={i} available={true}/>);
       } else {
         beds.push(<BedAvailabilityIcon key={i} available={false}/>);

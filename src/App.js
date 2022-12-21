@@ -9,7 +9,7 @@ import FillSubscription from './pages/Dashboard/FillSubscription';
 import Ticket from './pages/Dashboard/Ticket';
 import { Payment, PaymentInfo } from './pages/Dashboard/Payment';
 import Hotel from './pages/Dashboard/HotelI';
-import Activities from './pages/Dashboard/Activities';
+import { Activities, ActivitiesUnauthorized } from './pages/Dashboard/Activities';
 import Certificate from './pages/Dashboard/Certificate';
 
 import { EventInfoProvider } from './contexts/EventInfoContext';
@@ -43,6 +43,7 @@ export default function App() {
                 <Route path="payment-info" element={<PaymentInfo />} />
                 <Route path="hotel" element={<Hotel />} />
                 <Route path="activities" element={<Activities />} />
+                <Route path="activities-unauthorized" element={<ActivitiesUnauthorized />} />
                 <Route path="certificate" element={<Certificate />} />
                 <Route index path="*" element={<Navigate to="/dashboard/subscription" />} />
               </Route>

@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import useToken from '../../../../hooks/useToken';
 import { newPayment } from '../../../../services/paymentApi';
 import RenderCard from '../../../CardComponent/CardClass';
+import { toast } from 'react-toastify';
 
 export function RenderTicket(renderObject) {
   return <TicketInfoContainer>{RenderTicketInfo(renderObject)}</TicketInfoContainer>;
@@ -38,6 +39,10 @@ export function RenderPaymentInfo(renderObject) {
     formData: null,
   });
 
+  useEffect(() => {
+    toast('O seu pedido já está reservado! Basta finalizar o pagamento');
+  }, []);
+
   const [validToSend, setValidToSend] = useState(verifyData(paymentInfo));
   const [ableToClick, setAbleToClick] = useState(true);
 
@@ -66,6 +71,9 @@ export function RenderPaymentInfo(renderObject) {
 }
 
 export function RenderConfirmation() {
+  useEffect(() => {
+    toast('O seu pagamento já está em ordem!');
+  }, []);
   return (
     <Container>
       <IconContainer>

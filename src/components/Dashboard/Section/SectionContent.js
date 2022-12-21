@@ -1,3 +1,4 @@
+import { RenderUnauthorizedPage } from './SectionContents/ActivitiesContents';
 import { RenderConfirmation, RenderPaymentInfo, RenderTicket } from './SectionContents/PaymentContents';
 
 export function RenderSectionContent(text, page, renderObject) {
@@ -6,6 +7,9 @@ export function RenderSectionContent(text, page, renderObject) {
   }
   if (page === 'payment-done') {
     return RenderConfirmation();
+  }
+  if (page === 'unauthorized') {
+    return RenderActivitiesUnauthorized(renderObject);
   }
 
   return <></>;
@@ -20,4 +24,8 @@ function RenderPaymentContent(text, renderObject = {}) {
   }
 
   return <></>;
+}
+
+function RenderActivitiesUnauthorized(renderObject) {
+  return RenderUnauthorizedPage(renderObject);
 }

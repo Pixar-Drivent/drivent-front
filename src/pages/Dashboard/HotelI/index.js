@@ -13,8 +13,6 @@ export default function HotelI() {
     getHotels(setHotels, token);
   }, []); 
 
-  console.log(hotels);
-
   return <> 
     {RenderHeader({ text: 'Escolha de hotel e quarto' })}
     {hotels === undefined? 
@@ -23,15 +21,22 @@ export default function HotelI() {
       hotels.length === 0?
         <ErrorMsg> <div>Sua modalidade de ingresso não inclui hospedagem
         Prossiga para a escolha de atividades</div> </ErrorMsg> :
-        <HotelComponent />}
+        <Container>
+          <h1>Primeiro, escolha seu hotel</h1>
+          <div>
+            {hotels.map( (e, i) => <HotelComponent key={i} obj={e} model={true} />)}
+          </div>
+        </Container>}
   </>; 
 }
 
 async function getHotels(setHotels, token) {
   const response = await findHotels(token);
 
-  console.log(response);
-
+  if (response.status === 200) {
+    setHotels(response.data);
+    response.message = 'OK';
+  }
   if (!response || !response.status) {
     setHotels(undefined);
   }
@@ -40,9 +45,28 @@ async function getHotels(setHotels, token) {
   }
 }
 
+const Container = styled.div`
+  width: 100%;
+  min-height: 80%;
+
+  & > h1 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 23px;
+    color: #8E8E8E;
+    margin-top: 40px;
+  }
+
+  & > div {
+    display: flex;
+  }
+`;
+
 const ErrorMsg = styled.div`
   width: 100%;
-  height: 90%;
+  min-height: 80%;
   display: flex;
   align-items: center;
   justify-content: center;

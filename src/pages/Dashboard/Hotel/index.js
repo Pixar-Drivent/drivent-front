@@ -99,6 +99,7 @@ export default function Hotel() {
   function RenderReservation() {
     if (!selectedHotelObj || !reservationInfo) return <></>;
     const roomInfo = selectedHotelObj.Rooms.find(room => room.id === reservationInfo.Room.id);
+    if (!roomInfo) return <></>;
     const type = roomType(roomInfo.capacity);
     const vacancy = roomVacancy(roomInfo.capacity, roomInfo.Booking.length);
     const reservationObj = {

@@ -14,7 +14,7 @@ export function RoomCard({ room, selectedRoomState, reservationInfo }) {
 
   const isFull = capacity === occupancy;
   const isSelected = id === selectedRoom;
-  const isReserved = id === reservationInfo.Room.id;
+  const isReserved = id === reservationInfo?.Room.id;
 
   function handleSelectRoom(id, isFull) {
     if (isFull) return;

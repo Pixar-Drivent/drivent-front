@@ -4,7 +4,7 @@ import { RenderHeader } from '../../../components/Dashboard/Header/header';
 import { RenderSection } from '../../../components/Dashboard/Section/Section';
 import useToken from '../../../hooks/useToken';
 import { fetchTicketInfo } from '../../../services/paymentApi';
-import { Container, Day } from './style';
+import { Container, Day, Local, Event } from './style';
 
 //Renders the activities page
 export function Activities() {
@@ -16,7 +16,34 @@ export function Activities() {
   const days = [
     {
       name: 'segunda',
-      date: '22/10'
+      date: '22/10',
+      locals: [
+        {
+          name: 'Auditório Principal',
+          events: [
+            {
+              id: 0,
+              title: 'Minecraft',
+              duration: '10:00 - 11:00',
+              vacancy: 0
+            }
+          ]
+        },
+        {
+          name: 'Auditório Lateral',
+          events: [
+            {
+              id: 1,
+              title: 'Minecraft',
+              duration: '10:00 - 11:00',
+              vacancy: 3
+            }
+          ]
+        },
+        {
+          name: 'Sala de Workshop'
+        }
+      ]
     },
     {
       name: 'terça',
@@ -54,7 +81,18 @@ export function Activities() {
 
 function renderActivityByDay(day) {
   return <>
-    {day.name}
+    {day.locals? day.locals.map( (e, i) => {
+      return <Local>
+        <div>{e.name}</div>
+        <div>
+          {e.events? e.events.map( (ele, ind) => {
+            return <Event>
+              oi          
+            </Event>;
+          }) : ''}
+        </div>
+      </Local>;
+    }) : ''}
   </>;
 }
 

@@ -30,7 +30,40 @@ const Day = styled.div`
   margin-right: 15px;
 `;
 
+const Local = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 33%;
+  margin-top: 20px;
+
+  & > div:first-child {
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 20px;
+    color: #7B7B7B;
+  }
+
+  & > div:last-child {
+    border: 1px solid #D7D7D7;
+    width: 100%;
+    min-height: 350px;
+    margin-top: 10px;
+  }
+`;
+
+const Event = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+`;
+
 export {
   Container,
-  Day
+  Day,
+  Local,
+  Event
 };

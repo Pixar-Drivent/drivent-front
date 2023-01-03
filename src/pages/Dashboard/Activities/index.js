@@ -4,29 +4,58 @@ import { RenderHeader } from '../../../components/Dashboard/Header/header';
 import { RenderSection } from '../../../components/Dashboard/Section/Section';
 import useToken from '../../../hooks/useToken';
 import { fetchTicketInfo } from '../../../services/paymentApi';
+import { Container, Day } from './style';
 
 //Renders the activities page
 export function Activities() {
   const [redirect, setRedirect] = useState({ navigate: false });
+  const [daySelected, setDaySelected] = useState(null);
   const token = useToken();
   const navigate = useNavigate();
 
-  // eslint-disable-next-line space-before-function-paren
-  useEffect(async () => {
-    await findTicketInfo(setRedirect, token);
-  }, []);
+  const days = [
+    {
+      name: 'segunda',
+      date: '22/10'
+    },
+    {
+      name: 'terça',
+      date: '23/10'
+    },
+    {
+      name: 'quarta',
+      date: '24/10'
+    }
+  ];
 
-  useEffect(() => {
+  // eslint-disable-next-line space-before-function-paren
+  /* useEffect(async () => {
+    await findTicketInfo(setRedirect, token);
+  }, []); */
+
+  /* useEffect(() => {
     handleRedirect(redirect, navigate);
-  }, [redirect]);
+  }, [redirect]); */
 
   //Use the div to build activities page
   return (
     <>
       {RenderHeader({ text: 'Escolha de atividades' })}
-      <div>Em breve...</div>
+
+      <Container>
+        <div>
+          {days.map( (e, i) => <Day onClick={() => setDaySelected(i)} key={i} selected={daySelected===i ? true : false} >{e.name + ', ' + e.date}</Day>)}
+        </div>
+        <div>{daySelected !== null? renderActivityByDay(days[daySelected]) : ''}</div>        
+      </Container>
     </>
   );
+}
+
+function renderActivityByDay(day) {
+  return <>
+    {day.name}
+  </>;
 }
 
 //Renders the error page for when the user is not allowed to pick activities

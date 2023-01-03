@@ -5,11 +5,14 @@ import { RenderSection } from '../../../components/Dashboard/Section/Section';
 import useToken from '../../../hooks/useToken';
 import { fetchTicketInfo } from '../../../services/paymentApi';
 import { Container, Day, Local, Event } from './style';
+import { ImEnter, ImCancelCircle } from 'react-icons/im';
+import { BiCheckCircle } from 'react-icons/bi';
 
 //Renders the activities page
 export function Activities() {
   const [redirect, setRedirect] = useState({ navigate: false });
   const [daySelected, setDaySelected] = useState(null);
+  const [activities, setActivities] = useState([1, 3]); //colocar array vazio
   const token = useToken();
   const navigate = useNavigate();
 
@@ -22,9 +25,17 @@ export function Activities() {
           name: 'Auditório Principal',
           events: [
             {
-              id: 0,
+              id: 6,
               title: 'Minecraft',
-              duration: '10:00 - 11:00',
+              time: '10:00 - 11:30',
+              duration: 1.5,
+              vacancy: 0
+            },
+            {
+              id: 3,
+              title: 'Minecraft',
+              time: '10:00 - 12:00',
+              duration: 2,
               vacancy: 0
             }
           ]
@@ -35,7 +46,22 @@ export function Activities() {
             {
               id: 1,
               title: 'Minecraft',
-              duration: '10:00 - 11:00',
+              time: '10:00 - 11:00',
+              duration: 1,
+              vacancy: 1
+            },
+            {
+              id: 4,
+              title: 'Minecraft',
+              time: '10:00 - 11:00',
+              duration: 1,
+              vacancy: 2
+            },
+            {
+              id: 5,
+              title: 'Minecraft',
+              time: '10:00 - 11:30',
+              duration: 1.5,
               vacancy: 3
             }
           ]
@@ -56,13 +82,13 @@ export function Activities() {
   ];
 
   // eslint-disable-next-line space-before-function-paren
-  /* useEffect(async () => {
+  useEffect(async () => {
     await findTicketInfo(setRedirect, token);
-  }, []); */
+  }, []); 
 
-  /* useEffect(() => {
+  useEffect(() => {
     handleRedirect(redirect, navigate);
-  }, [redirect]); */
+  }, [redirect]); 
 
   //Use the div to build activities page
   return (
@@ -73,27 +99,52 @@ export function Activities() {
         <div>
           {days.map( (e, i) => <Day onClick={() => setDaySelected(i)} key={i} selected={daySelected===i ? true : false} >{e.name + ', ' + e.date}</Day>)}
         </div>
-        <div>{daySelected !== null? renderActivityByDay(days[daySelected]) : ''}</div>        
+        <div>{daySelected !== null? renderActivityByDay(days[daySelected], activities) : ''}</div>        
       </Container>
     </>
   );
 }
 
-function renderActivityByDay(day) {
+function renderActivityByDay(day, activities) {
   return <>
     {day.locals? day.locals.map( (e, i) => {
-      return <Local>
+      return <Local key={i}>
         <div>{e.name}</div>
         <div>
           {e.events? e.events.map( (ele, ind) => {
-            return <Event>
-              oi          
+            return <Event selected={activities.includes(ele.id)? true : false} vacancy={ele.vacancy} hour={ele.duration} key={ind}>
+              <div>
+                <h2>{ele.title}</h2>
+                <p>{ele.time}</p>
+              </div>  
+              <div onClick={() => selectActivity(ele.id)}>
+                {activities.includes(ele.id)? 
+                  <>
+                    <BiCheckCircle />
+                    <p>Inscrito</p>
+                  </> 
+                  : 
+                  ele.vacancy > 0? <>
+                    <ImEnter />
+                    <p>{ele.vacancy} {ele.vacancy > 1? 'vagas' : 'vaga'}</p>
+                  </> 
+                    :
+                    <>
+                      <ImCancelCircle />
+                      <p>Esgotado</p>
+                    </>
+                }
+              </div>       
             </Event>;
           }) : ''}
         </div>
       </Local>;
     }) : ''}
   </>;
+}
+
+function selectActivity(idActivity) {
+  alert('A atividade de id= ' + idActivity + ' foi escolhida');
 }
 
 //Renders the error page for when the user is not allowed to pick activities

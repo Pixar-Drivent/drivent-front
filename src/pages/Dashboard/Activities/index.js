@@ -7,15 +7,16 @@ import { fetchTicketInfo } from '../../../services/paymentApi';
 import { Container, Day, Local, Event } from './style';
 import { ImEnter, ImCancelCircle } from 'react-icons/im';
 import { BiCheckCircle } from 'react-icons/bi';
+import { toast } from 'react-toastify';
 
 //Renders the activities page
 export function Activities() {
   const [redirect, setRedirect] = useState({ navigate: false });
   const [daySelected, setDaySelected] = useState(null);
-  const [activities, setActivities] = useState([1, 3]); //colocar array vazio
+  const [activities, setActivities] = useState([]); //colocar array vazio
   const token = useToken();
   const navigate = useNavigate();
-
+  
   const days = [
     {
       name: 'segunda',
@@ -99,13 +100,13 @@ export function Activities() {
         <div>
           {days.map( (e, i) => <Day onClick={() => setDaySelected(i)} key={i} selected={daySelected===i ? true : false} >{e.name + ', ' + e.date}</Day>)}
         </div>
-        <div>{daySelected !== null? renderActivityByDay(days[daySelected], activities) : ''}</div>        
+        <div>{daySelected !== null? renderActivityByDay(days[daySelected], activities, setActivities) : ''}</div>        
       </Container>
     </>
   );
 }
 
-function renderActivityByDay(day, activities) {
+function renderActivityByDay(day, activities, setActivities) {
   return <>
     {day.locals? day.locals.map( (e, i) => {
       return <Local key={i}>
@@ -117,7 +118,7 @@ function renderActivityByDay(day, activities) {
                 <h2>{ele.title}</h2>
                 <p>{ele.time}</p>
               </div>  
-              <div onClick={() => selectActivity(ele.id)}>
+              <div onClick={() => selectActivity(ele, activities, setActivities)}>
                 {activities.includes(ele.id)? 
                   <>
                     <BiCheckCircle />
@@ -143,8 +144,28 @@ function renderActivityByDay(day, activities) {
   </>;
 }
 
-function selectActivity(idActivity) {
-  alert('A atividade de id= ' + idActivity + ' foi escolhida');
+function selectActivity(activity, array, setArray) {
+  const arrayActivitiesIds = [...array];
+  let index;
+
+  //If activity has been selected, just remove said activity
+  if (arrayActivitiesIds.includes(activity.id)) {
+    index = arrayActivitiesIds.findIndex((ele) => activity.id === ele);
+    arrayActivitiesIds.splice(index, 1);
+    setArray(arrayActivitiesIds);
+  } else {
+    //can i select this activity?
+    const ableToSelect = true;
+
+    if (ableToSelect) { 
+      arrayActivitiesIds.push(activity.id);
+      setArray(arrayActivitiesIds);
+    } else {
+      toast('Não foi possível selecionar a atividade devido a um conflito de horário');
+    }
+  }
+  
+  //console.log('A atividade de id= ' + activity.id + ' foi escolhida');
 }
 
 //Renders the error page for when the user is not allowed to pick activities

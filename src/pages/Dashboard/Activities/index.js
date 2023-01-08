@@ -168,7 +168,7 @@ async function selectActivity(activity, arrayActivitiesIds, token, setUpdate, up
     if (statusSelect.valid) { 
       await insertActivity(token, activity.id);
       setUpdate(!update);
-      toast(statusSelect.text);
+      //toast(statusSelect.text); Insert activity message, commented due to the case of timeschedule conflict
     } else {
       toast(statusSelect.text); //Nothing happens
     }

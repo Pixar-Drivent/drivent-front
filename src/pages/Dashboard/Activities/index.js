@@ -7,16 +7,21 @@ import { fetchTicketInfo } from '../../../services/paymentApi';
 import { Container, Day, Local, Event } from './style';
 import { ImEnter, ImCancelCircle } from 'react-icons/im';
 import { BiCheckCircle } from 'react-icons/bi';
+import { toast } from 'react-toastify';
+import { deleteActivity, getActivities, getUserActivities, insertActivity } from '../../../services/activitiesApi';
 
 //Renders the activities page
 export function Activities() {
+  const [update, setUpdate] = useState(false); 
   const [redirect, setRedirect] = useState({ navigate: false });
   const [daySelected, setDaySelected] = useState(null);
-  const [activities, setActivities] = useState([1, 3]); //colocar array vazio
+  const [activities, setActivities] = useState([]); //colocar array vazio
+  const [days, setDays] = useState([]);
   const token = useToken();
   const navigate = useNavigate();
-
-  const days = [
+  
+  //Legacy code: mocked activities
+  const daysMock = [
     {
       name: 'segunda',
       date: '22/10',
@@ -90,6 +95,13 @@ export function Activities() {
     handleRedirect(redirect, navigate);
   }, [redirect]); 
 
+  //Fetch "days" + "daily activities":
+  // eslint-disable-next-line space-before-function-paren
+  useEffect(async () => {
+    await getActivities(token, setDays);
+    await getUserActivities(token, setActivities);
+  }, [update]);
+
   //Use the div to build activities page
   return (
     <>
@@ -99,13 +111,13 @@ export function Activities() {
         <div>
           {days.map( (e, i) => <Day onClick={() => setDaySelected(i)} key={i} selected={daySelected===i ? true : false} >{e.name + ', ' + e.date}</Day>)}
         </div>
-        <div>{daySelected !== null? renderActivityByDay(days[daySelected], activities) : ''}</div>        
+        <div>{daySelected !== null? renderActivityByDay(days[daySelected], activities, setUpdate, token, update) : ''}</div>        
       </Container>
     </>
   );
 }
 
-function renderActivityByDay(day, activities) {
+function renderActivityByDay(day, activities, setUpdate, token, update) {
   return <>
     {day.locals? day.locals.map( (e, i) => {
       return <Local key={i}>
@@ -117,7 +129,7 @@ function renderActivityByDay(day, activities) {
                 <h2>{ele.title}</h2>
                 <p>{ele.time}</p>
               </div>  
-              <div onClick={() => selectActivity(ele.id)}>
+              <div onClick={() => selectActivity(ele, activities, token, setUpdate, update)}>
                 {activities.includes(ele.id)? 
                   <>
                     <BiCheckCircle />
@@ -143,8 +155,32 @@ function renderActivityByDay(day, activities) {
   </>;
 }
 
-function selectActivity(idActivity) {
-  alert('A atividade de id= ' + idActivity + ' foi escolhida');
+async function selectActivity(activity, arrayActivitiesIds, token, setUpdate, update) {
+  //If activity has been selected, just remove said activity
+  if (arrayActivitiesIds.includes(activity.id)) {
+    await deleteActivity(token, activity.id);
+    setUpdate(!update);
+    toast(toastMessages.remove.text);
+  } else {
+    //can i select this activity?
+    const statusSelect = toastMessages[verifyCanChoose(activity)];
+
+    if (statusSelect.valid) { 
+      await insertActivity(token, activity.id);
+      setUpdate(!update);
+      toast(statusSelect.text);
+    } else {
+      toast(statusSelect.text); //Nothing happens
+    }
+  }
+  return;
+}
+
+function verifyCanChoose(activity) {
+  if (activity.vacancy === 0) {
+    return 'noVacancy';
+  }
+  return 'insert';
 }
 
 //Renders the error page for when the user is not allowed to pick activities
@@ -197,3 +233,22 @@ function handleRedirect(redirect, navigate) {
     }
   }
 }
+
+const toastMessages = {
+  conflict: {
+    text: 'Não foi possível selecionar a atividade devido a um conflito de horário',
+    valid: false
+  }, 
+  remove: {
+    text: 'Atividade removida com sucesso',
+    valid: true
+  }, 
+  noVacancy: {
+    text: 'Atividade sem vagas',
+    valid: false,
+  },
+  insert: {
+    text: 'Atividade escolhida com sucesso',
+    valid: true
+  }
+};

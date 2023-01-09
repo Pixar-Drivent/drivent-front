@@ -6,7 +6,10 @@ export async function getActivities(token, setDays) {
       Authorization: `Bearer ${token}`
     }
   }).then((res) => {
-    setDays(res.data);
+    const dateASC = res.data.sort(function(a, b) {
+      return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+    });
+    setDays(dateASC);
   });
 
   return response;

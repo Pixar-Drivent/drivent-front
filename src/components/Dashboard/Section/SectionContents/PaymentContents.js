@@ -3,7 +3,7 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useToken from '../../../../hooks/useToken';
-import { newPayment } from '../../../../services/paymentApi';
+import { fetchTicketInfo, newPayment } from '../../../../services/paymentApi';
 import RenderCard from '../../../CardComponent/CardClass';
 import { toast } from 'react-toastify';
 
@@ -39,8 +39,17 @@ export function RenderPaymentInfo(renderObject) {
     formData: null,
   });
 
-  useEffect(() => {
-    toast('O seu pedido já está reservado! Basta finalizar o pagamento');
+  // eslint-disable-next-line space-before-function-paren
+  useEffect(async () => {
+    const response = await fetchTicketInfo(token);
+
+    if (response.status === 'RESERVED') {
+      toast('O seu pedido já está reservado! Basta finalizar o pagamento');
+    }
+
+    if (response.status === 'PAID') {
+      navigate('/dashboard/payment-info');
+    }
   }, []);
 
   const [validToSend, setValidToSend] = useState(verifyData(paymentInfo));

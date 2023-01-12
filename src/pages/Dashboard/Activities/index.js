@@ -162,13 +162,21 @@ async function selectActivity(activity, arrayActivitiesIds, token, setUpdate, up
     setUpdate(!update);
     toast(toastMessages.remove.text);
   } else {
-    //can i select this activity?
     const statusSelect = toastMessages[verifyCanChoose(activity)];
 
     if (statusSelect.valid) { 
-      await insertActivity(token, activity.id);
+      const responseObj = await insertActivity(token, activity.id);
+
+      if (responseObj.name) {
+        const code = +responseObj.message.split(' ').slice(-1)[0];
+        if (code === 409) {
+          toast(toastMessages['conflict'].text); //Conflict
+        }
+      } else {
+        toast(toastMessages['insert'].text);
+      }
+
       setUpdate(!update);
-      //toast(statusSelect.text); Insert activity message, commented due to the case of timeschedule conflict
     } else {
       toast(statusSelect.text); //Nothing happens
     }

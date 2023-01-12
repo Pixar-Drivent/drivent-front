@@ -23,16 +23,17 @@ export async function newPayment(body, token) {
   return response.data;
 }
 
-export async function fetchTicketInfo(token) {
+export async function fetchTicketInfo(token, setTicketInfo) {
   const response = await api
     .get('/tickets', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
-    .catch((err) => {
-      return err.toJSON();
     });
+
+  if (response.data && setTicketInfo) {
+    setTicketInfo(response.data);
+  }
 
   return response.data;
 }

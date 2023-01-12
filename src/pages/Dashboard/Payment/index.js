@@ -55,12 +55,13 @@ export function RenderPaymnentScreen() {
 
   // eslint-disable-next-line space-before-function-paren
   useEffect(async () => {
-    setTicketInfo(await fetchTicketInfo(token));
+    await fetchTicketInfo(token, setTicketInfo);
   }, [update]);
 
   useEffect(() => {
     handleRedirect(redirect, navigate);
   }, [redirect]);
+
   return (
     <>
       {RenderHeader({ text: 'Ingresso e pagamento' })}

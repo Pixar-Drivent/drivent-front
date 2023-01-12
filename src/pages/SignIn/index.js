@@ -13,6 +13,7 @@ import EventInfoContext from '../../contexts/EventInfoContext';
 import UserContext from '../../contexts/UserContext';
 
 import useSignIn from '../../hooks/api/useSignIn';
+import OAuth from '../../components/Auth/OAuth';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -52,6 +53,7 @@ export default function SignIn() {
           <Button type="submit" color="primary" fullWidth disabled={loadingSignIn}>Entrar</Button>
         </form>
       </Row>
+      <OAuth></OAuth>
       <Row>
         <Link to="/enroll">Não possui login? Inscreva-se</Link>
       </Row>

@@ -13,20 +13,25 @@ import { Activities, ActivitiesUnauthorized } from './pages/Dashboard/Activities
 import Certificate from './pages/Dashboard/Certificate';
 
 import { EventInfoProvider } from './contexts/EventInfoContext';
-import { UserProvider } from './contexts/UserContext';
+import UserContext from './contexts/UserContext';
 
 import useToken from './hooks/useToken';
+import { useState } from 'react';
 
 export default function App() {
+  const loggedUser = JSON.parse(localStorage.getItem('driventUser'));
+  const [user, setUser] = useState(loggedUser);
+  console.log('user: ', user);
+
   return (
     <>
       <ToastContainer />
       <EventInfoProvider>
-        <UserProvider>
+        <UserContext.Provider value={{ user, setUser }}>
           <Router>
             <Routes>
               <Route path="/" element={<Countdown />} />
-              <Route path="/enroll" element={<Enroll />} />
+              <Route path="/enroll" element={user ? <Navigate replace to={'/dashboard'}/> :<Enroll />} />
               <Route path="/sign-in" element={<SignIn />} />
 
               <Route
@@ -49,7 +54,7 @@ export default function App() {
               </Route>
             </Routes>
           </Router>
-        </UserProvider>
+        </UserContext.Provider>
       </EventInfoProvider>
     </>
   );

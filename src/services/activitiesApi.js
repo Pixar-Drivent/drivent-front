@@ -30,17 +30,27 @@ export async function insertActivity(token, activityId) {
   const body = {
     activityId: activityId
   };
+  let error;
+  const returnObj = {
+    err: null,
+    res: null
+  };
+
   const response = await api
     .post('/activities', body, {
       headers: {
         Authorization: `Bearer ${token}`,
       }
-    })
-    .catch((err) => {
-      return err.toJSON();
-    });
+    }).catch((err) => { error = err.toJSON(); });
 
-  return response;
+  if (error) {
+    returnObj.err = error;
+    return returnObj;
+  }
+
+  returnObj.res = response;
+
+  return returnObj;
 }
 
 export async function deleteActivity(token, activityId) {

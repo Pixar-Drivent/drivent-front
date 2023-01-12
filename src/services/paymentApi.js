@@ -13,26 +13,34 @@ export async function fetchPayment(token, ticketId) {
   return response.data;
 }
 
-export async function newPayment(body, token) {
-  const response = await api.post('/payments/process', body, {
+//Will redirect to stripe url given by the back-end
+export async function newPayment(token, ticketId) {
+  console.log(ticketId);
+  await api.post('/payments/process', { ticketId: ticketId }, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  }).then((res) => {
+    window.location.href = res.data.url; 
   });
-
-  return response.data;
 }
 
-export async function fetchTicketInfo(token) {
+export async function fetchTicketInfo(token, setTicketInfo) {
+  let errorResponse;
   const response = await api
     .get('/tickets', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
-    .catch((err) => {
-      return err.toJSON();
-    });
+    }).catch((err) => errorResponse = true);
+
+  if (errorResponse) {
+    return false;
+  }
+
+  if (response.data && setTicketInfo) {
+    setTicketInfo(response.data);
+  }
 
   return response.data;
 }
@@ -44,4 +52,15 @@ export async function reserveTicket(body, token) {
     },
   });
   return response.data;
+}
+
+export async function verifyPayment(token) {
+  let returnBool = false;
+  const response = await api.get('/payments/verify', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => returnBool = res.data.paid).catch((err) => returnBool = false); 
+
+  return returnBool; 
 }

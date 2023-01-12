@@ -3,9 +3,9 @@ import { AiFillCheckCircle } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useToken from '../../../../hooks/useToken';
-import { newPayment } from '../../../../services/paymentApi';
-import RenderCard from '../../../CardComponent/CardClass';
+import { fetchTicketInfo, newPayment, verifyPayment } from '../../../../services/paymentApi';
 import { toast } from 'react-toastify';
+import MoonLoader from 'react-spinners/MoonLoader';
 
 export function RenderTicket(renderObject) {
   return <TicketInfoContainer>{RenderTicketInfo(renderObject)}</TicketInfoContainer>;
@@ -29,50 +29,60 @@ function RenderTicketInfo(renderObject) {
 export function RenderPaymentInfo(renderObject) {
   const token = useToken();
   const navigate = useNavigate();
-  const [paymentInfo, setPaymentInfo] = useState({
-    number: '',
-    name: '',
-    expiry: '',
-    cvc: '',
-    issuer: '',
-    focused: '',
-    formData: null,
-  });
 
-  useEffect(() => {
-    toast('O seu pedido já está reservado! Basta finalizar o pagamento');
+  // eslint-disable-next-line space-before-function-paren
+  useEffect(async () => {
+    const ticketInfo = await fetchTicketInfo(token);
+    if (!ticketInfo) {
+      navigate('/dashboard/ticket');
+    }
+
+    const response = await fetchTicketInfo(token);
+
+    if (response.status === 'RESERVED') {
+      toast('O seu pedido já está reservado! Basta finalizar o pagamento');
+    }
+
+    if (response.status === 'PAID') {
+      navigate('/dashboard/payment-info');
+    }
   }, []);
 
-  const [validToSend, setValidToSend] = useState(verifyData(paymentInfo));
-  const [ableToClick, setAbleToClick] = useState(true);
-
-  useEffect(() => {
-    setValidToSend(verifyData(paymentInfo));
-  }, [paymentInfo]);
-
   return (
-    <>
-      <RenderCard alterValue={[setPaymentInfo, paymentInfo]} />
+    <ButtomsContainer>
       <ButtomContainer
-        isValid={validToSend}
-        onClick={() => {
-          if (ableToClick) {
-            if (validToSend) {
-              setAbleToClick(false);
-              handleSubmit(paymentInfo, renderObject, token, navigate);
-            }
-          }
-        }}
+        isValid={true}
+        onClick={() => { redirectToStripe(token, renderObject); }}
       >
         FINALIZAR PAGAMENTO
       </ButtomContainer>
-    </>
+
+      <ButtomContainer
+        isValid={false}
+        onClick={() => { navigate('/dashboard/payment-verification'); }}
+      >
+        Já realizei meu pagamento
+      </ButtomContainer>      
+    </ButtomsContainer>
   );
 }
 
+async function redirectToStripe(token, renderObject) {
+  await newPayment(token, renderObject.ticketInfo.id);
+}
+
 export function RenderConfirmation() {
-  useEffect(() => {
-    toast('O seu pagamento já está em ordem!');
+  const token = useToken();
+  const navigate = useNavigate();
+
+  // eslint-disable-next-line space-before-function-paren
+  useEffect(async () => {
+    const hasPaid = await verifyPayment(token);
+    if (hasPaid) {
+      toast('O seu pagamento já está em ordem!');
+    } else {
+      navigate('/dashboard/payment');
+    }
   }, []);
   return (
     <Container>
@@ -87,40 +97,73 @@ export function RenderConfirmation() {
   );
 }
 
-async function handleSubmit(paymentInfo, { ticketInfo }, token, navigate) {
-  const body = {
-    ticketId: ticketInfo.id,
-    cardData: {
-      issuer: paymentInfo.issuer,
-      number: +paymentInfo.number.split(' ').join(''),
-      name: paymentInfo.name,
-      expirationDate: '12/32',
-      cvv: +paymentInfo.cvc,
-    },
-  };
+export function RenderVerification() {
+  const token = useToken();
+  const navigate = useNavigate();
+  const [tries, setTries] = useState(0);
+  const [message, setMessage] = useState('Carregando pagamento');
+  const frequency = 0.75;
+  const [color, setColor] = useState('#'+Math.floor(Math.random()*16777215).toString(16));
+  const possibleColors = ['#F1D302', '#161925', '#00B295', '#191516', '#AB2346', '#484349', '#C1292E', '#161925', '#18A999', '#109648', '#'+Math.floor(Math.random()*16777215).toString(16)];
+  const colorsArrayLength = possibleColors.length;
+  const requestTimer = setInterval(() => {}, 1000);
 
-  await newPayment(body, token);
-  navigate('/dashboard/payment-info');
+  // eslint-disable-next-line space-before-function-paren
+  useEffect(async () => {
+    const interval = setInterval(() => {
+      setColor(possibleColors[Math.floor(Math.random() * colorsArrayLength)]);
+    }, 1500);
+
+    const ticketInfo = await fetchTicketInfo(token);
+    if (!ticketInfo) {
+      navigate('/dashboard/ticket');
+    }
+
+    const hasPaid = await verifyPayment(token);
+    if (hasPaid) {
+      navigate('/dashboard/payment-info');
+    }
+  }, [tries]);
+
+  //Sends requests after 10s, updating the number of tries
+  if (requestTimer % 10 === 0) {
+    setTries(tries+1);
+    setMessage(message + '.');
+  }
+
+  //after 3 tries it redirects to payment screen
+  if (tries > 3) {
+    toast('Pagamento não encontrado');
+    navigate('/dashboard/payment');
+  }
+
+  return (
+    <LoadingContainer>
+      <div>{message}</div>
+      <div>
+        <MoonLoader
+          color={color}
+          size={120}
+          aria-label='Loading Spinner'
+          data-testid='loader'
+          speedMultiplier={frequency}
+        />
+      </div>
+    </LoadingContainer>
+  );
 }
 
-function verifyData(paymentInfo) {
-  if (paymentInfo.number.length !== 19) {
-    return false;
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0;
+
+  div {
+    margin: 25px 0 25px 0;
   }
-  if (paymentInfo.name.length <= 1) {
-    return false;
-  }
-  if (paymentInfo.expiry.length !== 5) {
-    return false;
-  }
-  if (paymentInfo.cvc.length !== 3) {
-    return false;
-  }
-  if (paymentInfo.issuer.length <= 1) {
-    return false;
-  }
-  return true;
-}
+`;
 
 const Container = styled.div`
   margin: 15px 0 0 0;
@@ -175,7 +218,13 @@ const ButtomContainer = styled.div`
   line-height: 16px;
   text-align: center;
 
+  margin: 20px 40px 20px 0;
+
   color: #000000;
+`;
+
+const ButtomsContainer = styled.div`
+  display: flex;
 `;
 
 const TicketInfoContainer = styled.div`

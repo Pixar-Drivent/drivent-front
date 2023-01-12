@@ -31,6 +31,11 @@ export async function insertActivity(token, activityId) {
     activityId: activityId
   };
   let error;
+  const returnObj = {
+    err: null,
+    res: null
+  };
+
   const response = await api
     .post('/activities', body, {
       headers: {
@@ -39,10 +44,13 @@ export async function insertActivity(token, activityId) {
     }).catch((err) => { error = err.toJSON(); });
 
   if (error) {
-    return error;
+    returnObj.err = error;
+    return returnObj;
   }
 
-  return response;
+  returnObj.res = response;
+
+  return returnObj;
 }
 
 export async function deleteActivity(token, activityId) {

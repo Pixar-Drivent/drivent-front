@@ -167,11 +167,8 @@ async function selectActivity(activity, arrayActivitiesIds, token, setUpdate, up
     if (statusSelect.valid) { 
       const responseObj = await insertActivity(token, activity.id);
 
-      if (responseObj.name) {
-        const code = +responseObj.message.split(' ').slice(-1)[0];
-        if (code === 409) {
-          toast(toastMessages['conflict'].text); //Conflict
-        }
+      if (responseObj.err) {
+        toast(toastMessages['conflict'].text); //Conflict
       } else {
         toast(toastMessages['insert'].text);
       }

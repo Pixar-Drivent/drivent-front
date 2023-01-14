@@ -21,8 +21,7 @@ import { useState } from 'react';
 export default function App() {
   const loggedUser = JSON.parse(localStorage.getItem('driventUser'));
   const [user, setUser] = useState(loggedUser);
-  console.log('user: ', user);
-
+  
   return (
     <>
       <ToastContainer />

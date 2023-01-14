@@ -22,7 +22,7 @@ export default function SignIn() {
   const { loadingSignIn, signIn } = useSignIn();
 
   const { eventInfo } = useContext(EventInfoContext);
-  const { setUserData } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   const navigate = useNavigate();
   
@@ -31,7 +31,8 @@ export default function SignIn() {
 
     try {
       const userData = await signIn(email, password);
-      setUserData(userData);
+      localStorage.setItem('driventUser', JSON.stringify(userData));
+      setUser(userData);
       toast('Login realizado com sucesso!');
       navigate('/dashboard');
     } catch (err) {

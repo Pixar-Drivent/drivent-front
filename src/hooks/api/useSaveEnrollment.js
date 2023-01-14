@@ -5,7 +5,6 @@ import * as enrollmentApi from '../../services/enrollmentApi';
 
 export default function useSaveEnrollment() {
   const token = useToken();
-
   const {
     loading: saveEnrollmentLoading,
     error: saveEnrollmentError,

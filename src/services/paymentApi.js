@@ -15,7 +15,6 @@ export async function fetchPayment(token, ticketId) {
 
 //Will redirect to stripe url given by the back-end
 export async function newPayment(token, ticketId) {
-  console.log(ticketId);
   await api.post('/payments/process', { ticketId: ticketId }, {
     headers: {
       Authorization: `Bearer ${token}`,

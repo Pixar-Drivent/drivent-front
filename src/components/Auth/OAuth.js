@@ -10,13 +10,13 @@ export default function OAuth() {
   const { code } = qs.parseUrl(window.location.href).query;
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
-  
+
   if(code) {
     const response = axios.post('http://localhost:4000/auth/github-login', { code });
     response.then((res) => {
       const user =  res.data;
       const serializedUser = JSON.stringify(res.data);
-      localStorage.setItem('driventUser', serializedUser);
+      localStorage.setItem('driventUser', serializedUser); 
       setUser(res.data);
       navigate('/dashboard');
     }).catch((err) => {
@@ -30,7 +30,7 @@ export default function OAuth() {
       response_type: 'code',
       scope: 'user',
       client_id: CLIENT_ID,
-      redirect_uri: REDIRECT_URL
+      redirect_uri: REDIRECT_URL,
     };
     const queryStrings = qs.stringify(params);
     const authUrl = `${GITHUB_URL}?${queryStrings}`;

@@ -29,6 +29,7 @@ function RenderTicketInfo(renderObject) {
 export function RenderPaymentInfo(renderObject) {
   const token = useToken();
   const navigate = useNavigate();
+  const [valid, setValid] = useState(true);
 
   // eslint-disable-next-line space-before-function-paren
   useEffect(async () => {
@@ -51,18 +52,11 @@ export function RenderPaymentInfo(renderObject) {
   return (
     <ButtomsContainer>
       <ButtomContainer
-        isValid={true}
-        onClick={() => { redirectToStripe(token, renderObject); }}
+        isValid={valid}
+        onClick={() => { redirectToStripe(token, renderObject); setValid(!valid); }}
       >
         FINALIZAR PAGAMENTO
       </ButtomContainer>
-
-      <ButtomContainer
-        isValid={false}
-        onClick={() => { navigate('/dashboard/payment-verification'); }}
-      >
-        Já realizei meu pagamento
-      </ButtomContainer>      
     </ButtomsContainer>
   );
 }

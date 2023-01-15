@@ -7,11 +7,12 @@ import AuthLayout from '../../layouts/Auth';
 import Input from '../../components/Form/Input';
 import Button from '../../components/Form/Button';
 import Link from '../../components/Link';
-import { Row, Title, Label } from '../../components/Auth';
 
 import EventInfoContext from '../../contexts/EventInfoContext';
 import UserContext from '../../contexts/UserContext';
+import { Row, Title, Label, Subtitle, Divider, Line, OAuthWrapper } from '../../components/Auth';
 
+import { githubAuth } from '../../utils/authUtils';
 import useSignIn from '../../hooks/api/useSignIn';
 import OAuth from '../../components/Auth/OAuth';
 
@@ -53,9 +54,17 @@ export default function SignIn() {
           <Input label="Senha" type="password" fullWidth value={password} onChange={e => setPassword(e.target.value)} />
           <Button type="submit" color="primary" fullWidth disabled={loadingSignIn}>Entrar</Button>
         </form>
-      </Row>
-      <OAuth></OAuth>
-      <Row>
+        <Row>
+          <Divider>
+            <Line></Line>
+            <Subtitle>Ou faça login com</Subtitle>
+            <Line></Line>
+          </Divider>
+        </Row>
+        <OAuthWrapper>
+          <OAuth logo={githubAuth.logo} name={githubAuth.name}/>
+        </OAuthWrapper>
+
         <Link to="/enroll">Não possui login? Inscreva-se</Link>
       </Row>
     </AuthLayout>
